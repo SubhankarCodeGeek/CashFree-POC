@@ -4,6 +4,7 @@
     package="com.example.cashfree_poc">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:name="com.example.PaymentApplication"
@@ -16,6 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Cashfree_poc"
         tools:targetApi="31">
+        <activity
+            android:name=".CashFreePaymentActivity"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

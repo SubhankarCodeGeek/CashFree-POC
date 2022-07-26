@@ -11,4 +11,6 @@ class PaymentRepo @Inject constructor(
 
     suspend fun initiatePayment(request: CashFreePaymentInitiateRequest): PaymentInitiateResponse =
         api.paymentInitiate(request)
+
+    suspend fun verifyPayment(orderId: String): PaymentInitiateResponse = api.verifyPayment(orderId)
 }

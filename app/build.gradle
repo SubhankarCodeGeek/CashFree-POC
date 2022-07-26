@@ -5,6 +5,8 @@ plugins {
     id 'dagger.hilt.android.plugin'
 }
 
+
+
 android {
     compileSdk 32
 
@@ -98,7 +100,9 @@ dependencies {
     implementation "io.coil-kt:coil-compose:1.4.0"
 
     //CashFree
-    implementation "com.cashfree.pg:android-sdk:1.7.6"
+    implementation 'com.cashfree.pg:api:1.0.11'
+    //GridLayout is specially needed for CashFree
+    implementation 'androidx.gridlayout:gridlayout:1.0.0'
 
 
 }

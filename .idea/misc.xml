@@ -7,6 +7,33 @@
         <entry key="../../../../layout/compose-model-1658487097333.xml" value="0.2611111111111111" />
         <entry key="../../../../layout/compose-model-1658725929453.xml" value="0.3401688781664656" />
         <entry key="../../../../layout/compose-model-1658752400906.xml" value="1.0" />
+        <entry key="../../../../layout/compose-model-1658810905360.xml" value="0.2611111111111111" />
+        <entry key="../../../../layout/compose-model-1658812435740.xml" value="0.2611111111111111" />
+        <entry key="../../../../layout/compose-model-1658813836742.xml" value="0.2611111111111111" />
+        <entry key="../../../../layout/compose-model-1658815624255.xml" value="0.2611111111111111" />
+        <entry key="../../../../layout/compose-model-1658816792308.xml" value="0.2611111111111111" />
+        <entry key="../../../../layout/compose-model-1658819584093.xml" value="0.2611111111111111" />
+        <entry key="../../../../layout/compose-model-1658820459738.xml" value="1.0" />
+        <entry key="../../../../layout/compose-model-1658832000049.xml" value="0.2611111111111111" />
+        <entry key="../../../../layout/compose-model-1658833141086.xml" value="1.6022727272727273" />
+        <entry key="../../.gradle/caches/transforms-3/a70d760d176755f6e861a3981f5231a8/transformed/ui-1.0.11/res/layout/activity_cashfree_native_checkout.xml" value="0.35625" />
+        <entry key="../../.gradle/caches/transforms-3/a70d760d176755f6e861a3981f5231a8/transformed/ui-1.0.11/res/layout/cf_dialog_exit.xml" value="0.35625" />
+        <entry key="../../.gradle/caches/transforms-3/a70d760d176755f6e861a3981f5231a8/transformed/ui-1.0.11/res/layout/cf_dialog_item_nb_app.xml" value="0.35625" />
+        <entry key="../../.gradle/caches/transforms-3/a70d760d176755f6e861a3981f5231a8/transformed/ui-1.0.11/res/layout/cf_dialog_item_pv.xml" value="0.35625" />
+        <entry key="../../.gradle/caches/transforms-3/a70d760d176755f6e861a3981f5231a8/transformed/ui-1.0.11/res/layout/cf_dialog_item_quick_payment_mode.xml" value="0.35625" />
+        <entry key="../../.gradle/caches/transforms-3/a70d760d176755f6e861a3981f5231a8/transformed/ui-1.0.11/res/layout/cf_dialog_item_upi_app.xml" value="0.35625" />
+        <entry key="../../.gradle/caches/transforms-3/a70d760d176755f6e861a3981f5231a8/transformed/ui-1.0.11/res/layout/cf_dialog_nb.xml" value="0.35625" />
+        <entry key="../../.gradle/caches/transforms-3/a70d760d176755f6e861a3981f5231a8/transformed/ui-1.0.11/res/layout/cf_dialog_qr.xml" value="0.35625" />
+        <entry key="../../.gradle/caches/transforms-3/a70d760d176755f6e861a3981f5231a8/transformed/ui-1.0.11/res/layout/cf_dialog_quick_checkout.xml" value="0.35625" />
+        <entry key="../../.gradle/caches/transforms-3/a70d760d176755f6e861a3981f5231a8/transformed/ui-1.0.11/res/layout/cf_dialog_upi.xml" value="0.35625" />
+        <entry key="../../.gradle/caches/transforms-3/a70d760d176755f6e861a3981f5231a8/transformed/ui-1.0.11/res/layout/cf_item_nb_option.xml" value="0.35625" />
+        <entry key="../../.gradle/caches/transforms-3/a70d760d176755f6e861a3981f5231a8/transformed/ui-1.0.11/res/layout/cf_item_paylater_option.xml" value="0.35625" />
+        <entry key="../../.gradle/caches/transforms-3/a70d760d176755f6e861a3981f5231a8/transformed/ui-1.0.11/res/layout/cf_item_payment_mode_card.xml" value="0.35625" />
+        <entry key="../../.gradle/caches/transforms-3/a70d760d176755f6e861a3981f5231a8/transformed/ui-1.0.11/res/layout/cf_item_payment_mode_nb.xml" value="0.35625" />
+        <entry key="../../.gradle/caches/transforms-3/a70d760d176755f6e861a3981f5231a8/transformed/ui-1.0.11/res/layout/cf_item_payment_mode_paylater.xml" value="0.35625" />
+        <entry key="../../.gradle/caches/transforms-3/a70d760d176755f6e861a3981f5231a8/transformed/ui-1.0.11/res/layout/cf_item_payment_mode_upi.xml" value="0.35625" />
+        <entry key="../../.gradle/caches/transforms-3/a70d760d176755f6e861a3981f5231a8/transformed/ui-1.0.11/res/layout/cf_item_payment_mode_wallet.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_cash_free_payment.xml" value="0.35625" />
       </map>
     </option>
   </component>

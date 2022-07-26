@@ -7,7 +7,7 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class CashFreePaymentInitiateRequest(
     @Json(name = "amount")
-    val amount: Int? = null,
+    val amount: Double? = null,
     @Json(name = "email")
     val email: String? = null,
     @Json(name = "name")

@@ -1,9 +1,7 @@
 package com.example.cashfree_poc.ui.viewModel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.*
 import com.example.cashfree_poc.ui.api.data.CashFreePaymentInitiateRequest
 import com.example.cashfree_poc.ui.api.data.PaymentInitiateState
 import com.example.cashfree_poc.ui.api.domain.NetworkUtil
@@ -38,6 +36,9 @@ class PaymentViewModel @Inject constructor(
     private val _error = MutableSharedFlow<String>()
     val interNotAvailableError = _error.asSharedFlow()
 
+    private val _apiCallOnProgress = MutableSharedFlow<Boolean>()
+    val apiCallOnProgress = _apiCallOnProgress.asLiveData()
+
     fun onClickPaymentInitiate() {
         checkConnectivity {
             callPaymentInitiate()
@@ -48,6 +49,7 @@ class PaymentViewModel @Inject constructor(
         viewModelScope.launch {
             if (connectivityUtil.isInternetAvailable()) {
                 _softInputVisibility.emit(false)
+                _apiCallOnProgress.emit(true)
                 func.invoke(true)
             } else {
                 _error.emit("Please check your internet connection !!")
@@ -72,6 +74,7 @@ class PaymentViewModel @Inject constructor(
                     token = response.data?.infoForPayment?.orderToken
                 )
             }
+            _apiCallOnProgress.emit(false)
             _paymentInitiateState.value?.let {
                 _paymentInitiateEvent.emit(it)
             }
@@ -92,6 +95,7 @@ class PaymentViewModel @Inject constructor(
             } else {
                 _paymentError.emit(response.status?.message ?: "")
             }
+            _apiCallOnProgress.emit(false)
         }
     }
 }

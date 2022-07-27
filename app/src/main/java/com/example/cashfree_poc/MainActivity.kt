@@ -28,6 +28,7 @@ import com.example.cashfree_poc.ui.theme.Cashfree_pocTheme
 import com.example.cashfree_poc.ui.viewModel.PaymentViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity(), CFCheckoutResponseCallback {
@@ -55,19 +56,27 @@ class MainActivity : ComponentActivity(), CFCheckoutResponseCallback {
 
     private fun observePaymentInitiateState() {
         lifecycleScope.launchWhenStarted {
-            viewModel.paymentInitiateEvent.collectLatest {
-                if (it.orderId != null && it.token != null) {
-                    initCashFreeFlow(it.token, it.orderId)
+            launch {
+                viewModel.paymentInitiateEvent.collectLatest {
+                    if (it.orderId != null && it.token != null) {
+                        initCashFreeFlow(it.token, it.orderId)
+                    }
                 }
             }
-            viewModel.paymentError.collectLatest {
-                Toast.makeText(this@MainActivity, it, Toast.LENGTH_SHORT).show()
+            launch {
+                viewModel.paymentError.collectLatest {
+                    Toast.makeText(this@MainActivity, it, Toast.LENGTH_SHORT).show()
+                }
             }
-            viewModel.interNotAvailableError.collectLatest {
-                Toast.makeText(this@MainActivity, it, Toast.LENGTH_SHORT).show()
+            launch {
+                viewModel.interNotAvailableError.collectLatest {
+                    Toast.makeText(this@MainActivity, it, Toast.LENGTH_SHORT).show()
+                }
             }
-            viewModel.softInputVisibility.collectLatest {
-                hideKeyboard(this@MainActivity)
+            launch {
+                viewModel.softInputVisibility.collectLatest {
+                    hideKeyboard(this@MainActivity)
+                }
             }
         }
     }

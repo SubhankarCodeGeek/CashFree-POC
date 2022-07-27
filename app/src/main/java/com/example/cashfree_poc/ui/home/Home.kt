@@ -1,5 +1,6 @@
 package com.example.cashfree_poc.ui.home
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -15,17 +16,16 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.LinearGradient
-import androidx.compose.ui.modifier.modifierLocalConsumer
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cashfree_poc.R
 import com.example.cashfree_poc.ui.theme.Purple200
 import com.example.cashfree_poc.ui.theme.Teal200
+import com.example.cashfree_poc.ui.viewModel.PaymentViewModel
 
 @Composable
 fun HomeScreen(onClickAction: () -> Unit = {}) {
@@ -40,7 +40,8 @@ fun HomeScreen(onClickAction: () -> Unit = {}) {
                 modifier = Modifier
                     .sizeIn(minHeight = 70.dp)
                     .fillMaxWidth()
-                    .padding(bottom = 20.dp), onClickAction
+                    .padding(bottom = 20.dp),
+                onClickAction
             )
             Button(
                 onClick = { onClickAction() },
@@ -50,6 +51,8 @@ fun HomeScreen(onClickAction: () -> Unit = {}) {
             ) {
                 Text(text = "Pay")
             }
+            Spacer(modifier = Modifier.height(16.dp))
+            LinearProgressIndicator(modifier = Modifier)
         }
     }
 }
@@ -62,14 +65,17 @@ fun TopBar(
 }
 
 @Composable
-fun AmountFiled(modifier: Modifier = Modifier, onClickAction: () -> Unit = {}) {
+fun AmountFiled(
+    modifier: Modifier = Modifier,
+    onClickAction: () -> Unit = {},
+    viewModel: PaymentViewModel = viewModel()
+) {
     val focusRequester = remember { FocusRequester() }
     val textState = remember { mutableStateOf("1.00") }
 
     LaunchedEffect(key1 = Unit, block = {
         focusRequester.requestFocus()
     })
-
     TextField(
         modifier = modifier
             .border(width = 2.dp, color = Color.Black)

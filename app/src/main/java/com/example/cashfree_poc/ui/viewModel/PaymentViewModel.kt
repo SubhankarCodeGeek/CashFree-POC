@@ -6,16 +6,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cashfree_poc.ui.api.data.CashFreePaymentInitiateRequest
 import com.example.cashfree_poc.ui.api.data.PaymentInitiateState
+import com.example.cashfree_poc.ui.api.domain.NetworkUtil
 import com.example.cashfree_poc.ui.api.domain.repository.PaymentRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class PaymentViewModel @Inject constructor(
-    private val repo: PaymentRepo
+    private val repo: PaymentRepo,
+    private val connectivityUtil: NetworkUtil
 ) : ViewModel() {
 
     private val _paymentInitiateState: MutableLiveData<PaymentInitiateState> =
@@ -25,10 +29,33 @@ class PaymentViewModel @Inject constructor(
     private val _paymentInitiateEvent = MutableSharedFlow<PaymentInitiateState>()
     val paymentInitiateEvent = _paymentInitiateEvent.asSharedFlow()
 
+    private val _softInputVisibility = MutableSharedFlow<Boolean>()
+    val softInputVisibility = _softInputVisibility.asSharedFlow()
+
     private val _paymentError = MutableSharedFlow<String>()
     val paymentError = _paymentError.asSharedFlow()
 
+    private val _error = MutableSharedFlow<String>()
+    val interNotAvailableError = _error.asSharedFlow()
+
     fun onClickPaymentInitiate() {
+        checkConnectivity {
+            callPaymentInitiate()
+        }
+    }
+
+    private fun checkConnectivity(func: Boolean.() -> Unit = {}) {
+        viewModelScope.launch {
+            if (connectivityUtil.isInternetAvailable()) {
+                _softInputVisibility.emit(false)
+                func.invoke(true)
+            } else {
+                _error.emit("Please check your internet connection !!")
+            }
+        }
+    }
+
+    private fun callPaymentInitiate() {
         viewModelScope.launch {
             _paymentInitiateState.value?.apply {
                 val response = repo.initiatePayment(
@@ -52,7 +79,9 @@ class PaymentViewModel @Inject constructor(
     }
 
     fun verifyPayment(orderId: String) {
-        callPaymentVerifyApi(orderId)
+        checkConnectivity {
+            callPaymentVerifyApi(orderId)
+        }
     }
 
     private fun callPaymentVerifyApi(orderId: String) {
@@ -64,10 +93,5 @@ class PaymentViewModel @Inject constructor(
                 _paymentError.emit(response.status?.message ?: "")
             }
         }
-    }
-
-    companion object {
-        private const val APP_ID = "279936d5650dead5b88e9bda439972"
-        private const val SECRET_ID = "d1a265a86a304ee3a3acfaffbab5df57bd77c276"
     }
 }

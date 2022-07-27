@@ -1,6 +1,9 @@
 package com.example.cashfree_poc
 
+import android.app.Activity
 import android.os.Bundle
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -60,7 +63,23 @@ class MainActivity : ComponentActivity(), CFCheckoutResponseCallback {
             viewModel.paymentError.collectLatest {
                 Toast.makeText(this@MainActivity, it, Toast.LENGTH_SHORT).show()
             }
+            viewModel.interNotAvailableError.collectLatest {
+                Toast.makeText(this@MainActivity, it, Toast.LENGTH_SHORT).show()
+            }
+            viewModel.softInputVisibility.collectLatest {
+                hideKeyboard(this@MainActivity)
+            }
         }
+    }
+
+    private fun hideKeyboard(activity: Activity) {
+        val imm: InputMethodManager =
+            activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        var view = activity.currentFocus
+        if (view == null) {
+            view = View(activity)
+        }
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     private fun initCashFreeFlow(token: String, orderID: String) {

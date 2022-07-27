@@ -66,8 +66,6 @@ fun AmountFiled(modifier: Modifier = Modifier, onClickAction: () -> Unit = {}) {
     val focusRequester = remember { FocusRequester() }
     val textState = remember { mutableStateOf("1.00") }
 
-    val context = LocalContext.current
-
     LaunchedEffect(key1 = Unit, block = {
         focusRequester.requestFocus()
     })

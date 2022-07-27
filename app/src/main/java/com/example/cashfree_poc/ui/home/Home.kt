@@ -1,6 +1,5 @@
 package com.example.cashfree_poc.ui.home
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -16,73 +15,48 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cashfree_poc.R
 import com.example.cashfree_poc.ui.theme.Purple200
 import com.example.cashfree_poc.ui.theme.Teal200
 import com.example.cashfree_poc.ui.viewModel.PaymentViewModel
 
 @Composable
-fun HomeScreen(onClickAction: () -> Unit = {}) {
-    Scaffold(topBar = { TopBar() }) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(20.dp),
-            verticalArrangement = Arrangement.Center
-        ) {
-            AmountFiled(
-                modifier = Modifier
-                    .sizeIn(minHeight = 70.dp)
-                    .fillMaxWidth()
-                    .padding(bottom = 20.dp),
-                onClickAction
-            )
-            Button(
-                onClick = { onClickAction() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .sizeIn(minHeight = 40.dp)
-            ) {
-                Text(text = "Pay")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            LinearProgressIndicator(modifier = Modifier)
-        }
-    }
-}
-
-@Composable
 fun TopBar(
     modifier: Modifier = Modifier
 ) {
-    TopAppBar(title = { Text(text = "Cashfree Checkout") })
+    TopAppBar(
+        title = { Text(text = "Cashfree Checkout") },
+        modifier = modifier
+    )
 }
 
 @Composable
 fun AmountFiled(
     modifier: Modifier = Modifier,
+    text: String,
+    onTextChange: (String) -> Unit,
     onClickAction: () -> Unit = {},
-    viewModel: PaymentViewModel = viewModel()
+    enable: Boolean = true
 ) {
-    val focusRequester = remember { FocusRequester() }
-    val textState = remember { mutableStateOf("1.00") }
+//    val focusRequester = remember { FocusRequester() }
 
-    LaunchedEffect(key1 = Unit, block = {
-        focusRequester.requestFocus()
-    })
+//    LaunchedEffect(key1 = Unit, block = {
+//        focusRequester.requestFocus()
+//    })
     TextField(
         modifier = modifier
             .border(width = 2.dp, color = Color.Black)
             .padding(8.dp)
-            .focusRequester(focusRequester),
-        value = textState.value,
-        onValueChange = { textState.value = it },
+        /*.focusRequester(focusRequester)*/,
+        value = text,
+        onValueChange = { onTextChange(it) },
+        enabled = enable,
         leadingIcon = {
             Icon(
                 painter = painterResource(id = R.drawable.ic_baseline_currency_rupee_24),

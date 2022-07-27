@@ -13,7 +13,7 @@ data class InfoForPayment(
     @Json(name = "entity")
     val entity: String? = null,
     @Json(name = "order_amount")
-    val orderAmount: Int? = null,
+    val orderAmount: Double? = null,
     @Json(name = "order_currency")
     val orderCurrency: String? = null,
     @Json(name = "order_expiry_time")

@@ -1,16 +1,17 @@
 package com.example.cashfree_poc.ui.viewModel
 
-import androidx.compose.runtime.collectAsState
-import androidx.lifecycle.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.cashfree_poc.ui.api.data.CashFreePaymentInitiateRequest
 import com.example.cashfree_poc.ui.api.data.PaymentInitiateState
 import com.example.cashfree_poc.ui.api.domain.NetworkUtil
 import com.example.cashfree_poc.ui.api.domain.repository.PaymentRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,9 +21,10 @@ class PaymentViewModel @Inject constructor(
     private val connectivityUtil: NetworkUtil
 ) : ViewModel() {
 
-    private val _paymentInitiateState: MutableLiveData<PaymentInitiateState> =
-        MutableLiveData(PaymentInitiateState())
-    val paymentInitiateState: LiveData<PaymentInitiateState> get() = _paymentInitiateState
+    var paymentInitiateState by mutableStateOf(PaymentInitiateState())
+        private set
+
+    var paymentText by mutableStateOf("1.00")
 
     private val _paymentInitiateEvent = MutableSharedFlow<PaymentInitiateState>()
     val paymentInitiateEvent = _paymentInitiateEvent.asSharedFlow()
@@ -36,12 +38,18 @@ class PaymentViewModel @Inject constructor(
     private val _error = MutableSharedFlow<String>()
     val interNotAvailableError = _error.asSharedFlow()
 
-    private val _apiCallOnProgress = MutableSharedFlow<Boolean>()
-    val apiCallOnProgress = _apiCallOnProgress.asLiveData()
+    private val _apiCallOnProgress = mutableStateOf(true)
+    val apiCallOnProgress get() = _apiCallOnProgress
 
     fun onClickPaymentInitiate() {
-        checkConnectivity {
-            callPaymentInitiate()
+        viewModelScope.launch {
+            if (paymentText.isEmpty() || paymentText == "0.00") {
+                _error.emit("Payment amount should be greater than 0.00 !!")
+            } else {
+                checkConnectivity {
+                    callPaymentInitiate()
+                }
+            }
         }
     }
 
@@ -49,9 +57,10 @@ class PaymentViewModel @Inject constructor(
         viewModelScope.launch {
             if (connectivityUtil.isInternetAvailable()) {
                 _softInputVisibility.emit(false)
-                _apiCallOnProgress.emit(true)
+                _apiCallOnProgress.value = false
                 func.invoke(true)
             } else {
+                _apiCallOnProgress.value = true
                 _error.emit("Please check your internet connection !!")
             }
         }
@@ -59,7 +68,7 @@ class PaymentViewModel @Inject constructor(
 
     private fun callPaymentInitiate() {
         viewModelScope.launch {
-            _paymentInitiateState.value?.apply {
+            paymentInitiateState.apply {
                 val response = repo.initiatePayment(
                     CashFreePaymentInitiateRequest(
                         amount,
@@ -69,13 +78,13 @@ class PaymentViewModel @Inject constructor(
                         phone
                     )
                 )
-                _paymentInitiateState.value = _paymentInitiateState.value?.copy(
+                paymentInitiateState = paymentInitiateState.copy(
                     orderId = response.data?.infoForPayment?.orderId,
                     token = response.data?.infoForPayment?.orderToken
                 )
             }
-            _apiCallOnProgress.emit(false)
-            _paymentInitiateState.value?.let {
+            _apiCallOnProgress.value = true
+            paymentInitiateState.let {
                 _paymentInitiateEvent.emit(it)
             }
         }
@@ -95,7 +104,12 @@ class PaymentViewModel @Inject constructor(
             } else {
                 _paymentError.emit(response.status?.message ?: "")
             }
-            _apiCallOnProgress.emit(false)
+            _apiCallOnProgress.value = true
         }
+    }
+
+    fun onValueChange(value: String) {
+        paymentText = value
+        paymentInitiateState = paymentInitiateState.copy(amount = paymentText.toDoubleOrNull())
     }
 }

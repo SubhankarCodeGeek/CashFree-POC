@@ -1,17 +1,14 @@
 package com.example.cashfree_poc
 
-import android.app.Activity
 import android.os.Bundle
-import android.view.View
-import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import com.cashfree.pg.api.CFPaymentGatewayService
 import com.cashfree.pg.core.api.CFSession
@@ -23,8 +20,11 @@ import com.cashfree.pg.core.api.utils.CFErrorResponse
 import com.cashfree.pg.ui.api.CFDropCheckoutPayment.CFDropCheckoutPaymentBuilder
 import com.cashfree.pg.ui.api.CFPaymentComponent
 import com.cashfree.pg.ui.api.CFPaymentComponent.CFPaymentComponentBuilder
-import com.example.cashfree_poc.ui.home.HomeScreen
-import com.example.cashfree_poc.ui.theme.Cashfree_pocTheme
+import com.example.cashfree_poc.ui.api.data.PaymentInitiateState
+import com.example.cashfree_poc.ui.home.AmountFiled
+import com.example.cashfree_poc.ui.home.TopBar
+import com.example.cashfree_poc.ui.util.hideKeyboard
+import com.example.cashfree_poc.ui.util.toast
 import com.example.cashfree_poc.ui.viewModel.PaymentViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -39,19 +39,56 @@ class MainActivity : ComponentActivity(), CFCheckoutResponseCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Cashfree_pocTheme {
+            MaterialTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    HomeScreen {
-                        viewModel.onClickPaymentInitiate()
-                    }
+                    HomeScreen(viewModel = viewModel)
                 }
             }
         }
         observePaymentInitiateState()
+    }
+
+    @Composable
+    fun HomeScreen(viewModel: PaymentViewModel) {
+        Scaffold(topBar = { TopBar() }) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
+                AmountFiled(
+                    modifier = Modifier
+                        .sizeIn(minHeight = 70.dp)
+                        .fillMaxWidth()
+                        .padding(bottom = 20.dp),
+                    text = viewModel.paymentText,
+                    onTextChange = { viewModel.onValueChange(it) },
+                    { viewModel.onClickPaymentInitiate() },
+                    enable = viewModel.apiCallOnProgress.value
+                )
+                Button(
+                    onClick = { viewModel.onClickPaymentInitiate() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .sizeIn(minHeight = 46.dp),
+                    enabled = viewModel.apiCallOnProgress.value
+                ) {
+                    Text(text = "Pay")
+                }
+                if (viewModel.apiCallOnProgress.value.not()) {
+                    LinearProgressIndicator(
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                } else {
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+            }
+        }
     }
 
     private fun observePaymentInitiateState() {
@@ -63,32 +100,10 @@ class MainActivity : ComponentActivity(), CFCheckoutResponseCallback {
                     }
                 }
             }
-            launch {
-                viewModel.paymentError.collectLatest {
-                    Toast.makeText(this@MainActivity, it, Toast.LENGTH_SHORT).show()
-                }
-            }
-            launch {
-                viewModel.interNotAvailableError.collectLatest {
-                    Toast.makeText(this@MainActivity, it, Toast.LENGTH_SHORT).show()
-                }
-            }
-            launch {
-                viewModel.softInputVisibility.collectLatest {
-                    hideKeyboard(this@MainActivity)
-                }
-            }
+            launch { viewModel.paymentError.collectLatest { toast(it) } }
+            launch { viewModel.interNotAvailableError.collectLatest { toast(it) } }
+            launch { viewModel.softInputVisibility.collectLatest { hideKeyboard() } }
         }
-    }
-
-    private fun hideKeyboard(activity: Activity) {
-        val imm: InputMethodManager =
-            activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        var view = activity.currentFocus
-        if (view == null) {
-            view = View(activity)
-        }
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     private fun initCashFreeFlow(token: String, orderID: String) {
@@ -138,7 +153,7 @@ class MainActivity : ComponentActivity(), CFCheckoutResponseCallback {
     }
 
     override fun onPaymentFailure(cfErrorResponse: CFErrorResponse?, orderId: String?) {
-        Toast.makeText(this@MainActivity, cfErrorResponse?.message ?: "", Toast.LENGTH_SHORT).show()
+        toast(cfErrorResponse?.message)
     }
 
 }
